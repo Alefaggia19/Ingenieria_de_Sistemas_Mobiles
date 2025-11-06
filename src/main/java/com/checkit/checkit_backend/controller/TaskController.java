@@ -5,12 +5,10 @@ import com.checkit.checkit_backend.service.TaskService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 
 @RestController
-@RequestMapping("/api/tasks")
+@RequestMapping("/api") // Nota: Ho reso il mapping di base più generico
+@CrossOrigin(origins = "*") // Aggiunto per coerenza
 public class TaskController {
 
     private final TaskService taskService;
@@ -19,31 +17,39 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @GetMapping
-    public List<Task> getAllTasks() {
-        return taskService.getAllTasks();
+    // NUOVO ENDPOINT:
+    // GET /api/challenges/1/tasks -> Restituisce tutte le task per la sfida 1
+    @GetMapping("/challenges/{challengeId}/tasks")
+    public List<Task> getTasksForChallenge(@PathVariable Long challengeId) {
+        return taskService.getTasksByChallengeId(challengeId);
     }
 
-    @GetMapping("/{id}")
+    // ENDPOINT MODIFICATO:
+    // POST /api/challenges/1/tasks -> Aggiunge una nuova task (dal RequestBody) alla sfida 1
+    @PostMapping("/challenges/{challengeId}/tasks")
+    public Task addTaskToChallenge(@PathVariable Long challengeId, @RequestBody Task task) {
+        return taskService.addTaskToChallenge(challengeId, task);
+    }
+
+    // Questi endpoint restano validi per operare su task singole
+    // (presupponendo di conoscere già l'ID della task)
+
+    // GET /api/tasks/5 -> Restituisce la task con ID 5
+    @GetMapping("/tasks/{id}")
     public Task getTaskById(@PathVariable Long id) {
         return taskService.getTaskById(id);
     }
 
-        @PostMapping
-    public Task addTask(@RequestBody Task task) {
-        return taskService.addTask(task);
-    }
-
-    @PutMapping("/{id}")
+    // PUT /api/tasks/5 -> Aggiorna la task 5
+    @PutMapping("/tasks/{id}")
     public Task updateTask(@PathVariable Long id, @RequestBody Task updatedTask) {
         return taskService.updateTask(id, updatedTask);
     }
 
-    @DeleteMapping("/{id}")
+    // DELETE /api/tasks/5 -> Elimina la task 5
+    @DeleteMapping("/tasks/{id}")
     public String deleteTask(@PathVariable Long id) {
         boolean removed = taskService.deleteTask(id);
         return removed ? "Task eliminata con successo." : "Task non trovata.";
     }
-
-
 }

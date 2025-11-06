@@ -1,30 +1,68 @@
 package com.checkit.checkit_backend.model;
 
-public class Task {
-    private Long id;
-    private String title;
-    private String description;
-    private boolean completed;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "tasks")
+public class Task {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "task_order")
+    private int taskOrder; // [cite: 104]
+
+    @Column(nullable = false)
+    private String name; // [cite: 105] (era 'title' nel tuo vecchio codice)
+
+    @Column(nullable = false)
+    private String type; // [cite: 106] (es. "QR", "NFC", "TEXT")
+
+    // Soluzioni (possono essere nulle a seconda del tipo)
+    @Column(name = "qr_answer")
+    private String qrAnswer; // [cite: 107]
+
+    @Column(name = "nfc_answer")
+    private String nfcAnswer; // [cite: 108]
+
+    @Column(name = "text_answer")
+    private String textAnswer; // [cite: 109]
+
+    // Relazione: Molte attività appartengono a Una Sfida
+    @ManyToOne
+    @JoinColumn(name = "challenge_id", nullable = false) // La FK per la sfida
+    private Challenge challenge;
+    
+    // NOTA: 'completed' non è qui!
+    // Come da diagramma [cite: 118-121], 'TaskCompletion' è una tabella separata 
+    // che lega User e Task. La logica di "completamento" sarà nel Service.
+
+    // Costruttori, Getters e Setters
     public Task() {}
 
-    public Task(Long id, String title, String description, boolean completed) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.completed = completed;
-    }
-
-    // Getters e setters
+    // Getters e Setters (aggiornati)
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public int getTaskOrder() { return taskOrder; }
+    public void setTaskOrder(int taskOrder) { this.taskOrder = taskOrder; }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public boolean isCompleted() { return completed; }
-    public void setCompleted(boolean completed) { this.completed = completed; }
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
+
+    public String getQrAnswer() { return qrAnswer; }
+    public void setQrAnswer(String qrAnswer) { this.qrAnswer = qrAnswer; }
+
+    public String getNfcAnswer() { return nfcAnswer; }
+    public void setNfcAnswer(String nfcAnswer) { this.nfcAnswer = nfcAnswer; }
+
+    public String getTextAnswer() { return textAnswer; }
+    public void setTextAnswer(String textAnswer) { this.textAnswer = textAnswer; }
+
+    public Challenge getChallenge() { return challenge; }
+    public void setChallenge(Challenge challenge) { this.challenge = challenge; }
 }
