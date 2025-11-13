@@ -1,11 +1,15 @@
 package com.checkit.checkit_backend.model;
 
 import jakarta.persistence.*;
-import java.util.List;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 @Table(name = "users") // Specifica il nome della tabella nel DB
-public class User {
+public class User implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // ID auto-incrementante
@@ -15,13 +19,25 @@ public class User {
     private String username;
 
     @Column(nullable = false)
-    private String password; // Vedremo poi come salvarla in modo sicuro!
+    private String password; // it stores the password hash
 
     // Relazione: Un utente può creare Molte sfide
     @OneToMany(mappedBy = "user") // "mappedBy" punta al campo 'user' in Challenge.java
     private List<Challenge> createdChallenges;
 
     // TODO: Aggiungere le altre relazioni (savedChallenges, completedTasks)
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // You can return the user's roles here (e.g., ROLE_USER, ROLE_ADMIN)
+        // For a simple app, return an empty list or a default role
+        return Collections.emptyList();
+    }
+
+
+
+
 
     // Costruttori, Getters e Setters
     public User() {}
