@@ -1,63 +1,102 @@
 package com.checkit.checkit_backend.service;
 
 import com.checkit.checkit_backend.model.Task;
+import com.checkit.checkit_backend.model.TaskCompletion;
+import com.checkit.checkit_backend.model.User;
+import com.checkit.checkit_backend.model.Challenge;
+import com.checkit.checkit_backend.repository.TaskCompletionRepository;
 import com.checkit.checkit_backend.repository.TaskRepository;
 import com.checkit.checkit_backend.repository.ChallengeRepository;
-import com.checkit.checkit_backend.model.Challenge;
+import com.checkit.checkit_backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class TaskService {
 
-    // 1. Iniettiamo i Repository
     private final TaskRepository taskRepository;
     private final ChallengeRepository challengeRepository;
+    private final TaskCompletionRepository taskCompletionRepository;
+    private final UserRepository userRepository;
 
-    public TaskService(TaskRepository taskRepository, ChallengeRepository challengeRepository) {
+    public TaskService(TaskRepository taskRepository, 
+                       ChallengeRepository challengeRepository,
+                       TaskCompletionRepository taskCompletionRepository,
+                       UserRepository userRepository) {
         this.taskRepository = taskRepository;
         this.challengeRepository = challengeRepository;
-        // Non servono dati finti
+        this.taskCompletionRepository = taskCompletionRepository;
+        this.userRepository = userRepository;
     }
 
-    // NUOVO: Questo metodo ora ha più senso
+    /**
+     * Validates the user's response and marks the task as completed.
+     */
+    public boolean completeTask(Long taskId, String username, String userResponse) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        // 1. Check if the user has already completed this task
+        if (taskCompletionRepository.existsByUserIdAndTaskId(user.getId(), taskId)) {
+            return true; // Already done, return success
+        }
+
+        // 2. Validate the answer based on the task Type
+        boolean isCorrect = false;
+        
+        // Case-insensitive check for text answers
+        if ("TEXT".equalsIgnoreCase(task.getType())) {
+            isCorrect = userResponse != null && userResponse.equalsIgnoreCase(task.getTextAnswer());
+        } 
+        // Exact match required for QR codes
+        else if ("QR".equalsIgnoreCase(task.getType())) {
+            isCorrect = userResponse != null && userResponse.equals(task.getQrAnswer());
+        } 
+        // Exact match required for NFC tags
+        else if ("NFC".equalsIgnoreCase(task.getType())) {
+            isCorrect = userResponse != null && userResponse.equals(task.getNfcAnswer());
+        }
+
+        // 3. If correct, save the completion record
+        if (isCorrect) {
+            TaskCompletion completion = new TaskCompletion(user, task);
+            taskCompletionRepository.save(completion);
+            return true;
+        }
+        
+        return false; // Answer was incorrect
+    }
+
+    // --- Standard CRUD Methods ---
+    
     public List<Task> getTasksByChallengeId(Long challengeId) {
         return taskRepository.findByChallengeId(challengeId);
     }
 
     public Task getTaskById(Long id) {
-        return taskRepository.findById(id)
-                .orElse(null);
+        return taskRepository.findById(id).orElse(null);
     }
 
-    // MODIFICATO: Per aggiungere una task, dobbiamo sapere A QUALE SFIDA appartiene
     public Task addTaskToChallenge(Long challengeId, Task task) {
         Challenge challenge = challengeRepository.findById(challengeId)
-                .orElseThrow(() -> new IllegalArgumentException("Sfida non trovata"));
-        
-        task.setChallenge(challenge); // Collega la task alla sfida
-        
+                .orElseThrow(() -> new IllegalArgumentException("Challenge not found"));
+        task.setChallenge(challenge);
         return taskRepository.save(task);
     }
 
     public Task updateTask(Long id, Task updatedTask) {
-        Task existingTask = taskRepository.findById(id)
-                .orElse(null);
-
-        if (existingTask != null) {
-            existingTask.setName(updatedTask.getName());
-            existingTask.setTaskOrder(updatedTask.getTaskOrder());
-            existingTask.setType(updatedTask.getType());
-            existingTask.setQrAnswer(updatedTask.getQrAnswer());
-            existingTask.setNfcAnswer(updatedTask.getNfcAnswer());
-            existingTask.setTextAnswer(updatedTask.getTextAnswer());
-            // Non aggiorniamo l'ID della challenge
-            
-            return taskRepository.save(existingTask);
-        }
-        return null; // Task non trovata
+        return taskRepository.findById(id).map(task -> {
+            task.setName(updatedTask.getName());
+            task.setTaskOrder(updatedTask.getTaskOrder());
+            task.setType(updatedTask.getType());
+            // Update answers
+            task.setQrAnswer(updatedTask.getQrAnswer());
+            task.setNfcAnswer(updatedTask.getNfcAnswer());
+            task.setTextAnswer(updatedTask.getTextAnswer());
+            return taskRepository.save(task);
+        }).orElse(null);
     }
 
     public boolean deleteTask(Long id) {
@@ -65,12 +104,6 @@ public class TaskService {
             taskRepository.deleteById(id);
             return true;
         }
-        return false; // Task non trovata
-    }
-    
-    // Il vecchio 'getAllTasks()' non ha molto senso, 
-    // ma lo lasciamo se serve per debug
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+        return false;
     }
 }

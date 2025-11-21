@@ -21,13 +21,23 @@ public class User implements UserDetails{
     @Column(nullable = false)
     private String password; // it stores the password hash
 
-    // Relazione: Un utente può creare Molte sfide
-    @OneToMany(mappedBy = "user") // "mappedBy" punta al campo 'user' in Challenge.java
+    //  Un user can create differt challenges
+    @OneToMany(mappedBy = "user") 
     private List<Challenge> createdChallenges;
 
-    // TODO: Aggiungere le altre relazioni (savedChallenges, completedTasks)
+    
 
+    @ManyToMany
+    @JoinTable(
+        name = "challenge_user_saved",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "challenge_id")
+    )
+    private List<Challenge> savedChallenges;
 
+    // Getter e Setter per savedChallenges
+    public List<Challenge> getSavedChallenges() { return savedChallenges; }
+    public void setSavedChallenges(List<Challenge> savedChallenges) { this.savedChallenges = savedChallenges; }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // You can return the user's roles here (e.g., ROLE_USER, ROLE_ADMIN)
@@ -36,10 +46,7 @@ public class User implements UserDetails{
     }
 
 
-
-
-
-    // Costruttori, Getters e Setters
+    // Getters e Setters
     public User() {}
     
     public Long getId() { return id; }
