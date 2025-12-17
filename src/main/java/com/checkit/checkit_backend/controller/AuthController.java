@@ -57,7 +57,7 @@ public class AuthController {
 
     // --- REGISTER ENDPOINT (NEW) ---
     @PostMapping("/register")
-    public String registerUser(@RequestBody AuthRequest registerRequest) {
+    public RegisterResponse registerUser(@RequestBody AuthRequest registerRequest) {
         // 1. Check if username already exists
         if (userRepository.findByUsername(registerRequest.getUsername()).isPresent()) {
             throw new RuntimeException("Username already taken");
@@ -72,7 +72,7 @@ public class AuthController {
         // 3. Save to Database
         userRepository.save(newUser);
 
-        return "User registered successfully";
+        return new RegisterResponse("User registered successfully");
     }
 }
 
@@ -82,3 +82,5 @@ record AuthRequest(String username, String password) {
     public String getPassword() { return password; }
 }
 record AuthResponse(String token, String username) {}
+
+record RegisterResponse(String message){}
