@@ -4,10 +4,12 @@ import com.checkit.checkit_backend.model.User;
 import com.checkit.checkit_backend.repository.UserRepository;
 import com.checkit.checkit_backend.utils.JwtUtil;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,18 +43,25 @@ public class AuthController {
     @PostMapping("/login")
     public AuthResponse authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
         // 1. Authenticate user using credentials (checks password match)
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
-        );
+        try{
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
+            );
 
-        // 2. Load the authenticated UserDetails
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
+            // 2. Load the authenticated UserDetails
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
 
-        // 3. Generate JWT Token
-        final String jwt = jwtUtil.generateToken(userDetails);
+            // 3. Generate JWT Token
+            final String jwt = jwtUtil.generateToken(userDetails);
 
-        // 4. Return the JWT in the response
-        return new AuthResponse(jwt, userDetails.getUsername());
+            // 4. Return the JWT in the response
+            return new AuthResponse(null,jwt, userDetails.getUsername());
+        } catch (BadCredentialsException e ){
+            return new AuthResponse("El nombre de usuario o la contraseña no es correcto",null,null);
+        } catch (Exception e){
+            return new AuthResponse("Error inesperado",null,null);
+        }
+
     }
 
     // --- REGISTER ENDPOINT (NEW) ---
@@ -60,7 +69,9 @@ public class AuthController {
     public RegisterResponse registerUser(@RequestBody AuthRequest registerRequest) {
         // 1. Check if username already exists
         if (userRepository.findByUsername(registerRequest.getUsername()).isPresent()) {
-            throw new RuntimeException("Username already taken");
+            return new RegisterResponse("Nombre de usuario ya registrado");
+
+
         }
 
         // 2. Create new User entity
@@ -72,7 +83,7 @@ public class AuthController {
         // 3. Save to Database
         userRepository.save(newUser);
 
-        return new RegisterResponse("User registered successfully");
+        return new RegisterResponse(null);
     }
 }
 
@@ -81,6 +92,6 @@ record AuthRequest(String username, String password) {
     public String getUsername() { return username; }
     public String getPassword() { return password; }
 }
-record AuthResponse(String token, String username) {}
+record AuthResponse(String errorResponse,String token, String username) {}
 
-record RegisterResponse(String message){}
+record RegisterResponse(String errorMessage){}
