@@ -1,6 +1,7 @@
 package com.checkit.checkit_backend.service;
 
 import com.checkit.checkit_backend.dto.ChallengeDto;
+import com.checkit.checkit_backend.dto.NewChallengeDto;
 import com.checkit.checkit_backend.dto.TaskDto;
 import com.checkit.checkit_backend.model.Challenge;
 import com.checkit.checkit_backend.model.Task;
@@ -24,21 +25,24 @@ public class ChallengeService {
     /**
      * Creates a new Challenge linked to the authenticated user.
      */
-    public ChallengeDto createChallenge(Challenge challenge, String username) {
+    public ChallengeDto createChallenge(NewChallengeDto challenge, String username) {
         // Fetch the user from DB using the username from JWT
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        challenge.setUser(user); 
-
+        Challenge challengeEntity = new Challenge();
+        challengeEntity.setName(challenge.getName());
+        challengeEntity.setDescription(challenge.getDescription());
+        challengeEntity.setUser(user);
+        challengeEntity.setOrdered(true);
         // Link tasks to the challenge to ensure cascade saving works
-        if (challenge.getTasks() != null) {
-            for (Task task : challenge.getTasks()) {
-                task.setChallenge(challenge);
-            }
-        }
+//        if (challenge.getTasks() != null) {
+//            for (Task task : challenge.getTasks()) {
+//                task.setChallenge(challenge);
+//            }
+//        }
         // Save and convert to DTO
-        return toChallengeDto(challengeRepository.save(challenge));
+        return toChallengeDto(challengeRepository.save(challengeEntity));
     }
 
     /**

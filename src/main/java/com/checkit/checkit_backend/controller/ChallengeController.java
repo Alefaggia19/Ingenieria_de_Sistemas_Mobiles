@@ -1,6 +1,7 @@
 package com.checkit.checkit_backend.controller;
 
 import com.checkit.checkit_backend.dto.ChallengeDto;
+import com.checkit.checkit_backend.dto.NewChallengeDto;
 import com.checkit.checkit_backend.model.Challenge;
 import com.checkit.checkit_backend.service.ChallengeService;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class ChallengeController {
 
     //CREARE CHALLENGE
     @PostMapping
-    public ChallengeDto createChallenge(@RequestBody Challenge challenge, Principal principal) {
+    public ChallengeDto createChallenge(@RequestBody NewChallengeDto challenge, Principal principal) {
         // 'principal.getName()' restituisce lo username dal Token JWT
         return challengeService.createChallenge(challenge, principal.getName());
     }

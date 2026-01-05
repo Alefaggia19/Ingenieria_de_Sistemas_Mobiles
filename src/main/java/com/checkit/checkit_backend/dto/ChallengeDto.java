@@ -3,6 +3,10 @@ package com.checkit.checkit_backend.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
+
+
+
 public class ChallengeDto {
     private Long id;
     private String name;
