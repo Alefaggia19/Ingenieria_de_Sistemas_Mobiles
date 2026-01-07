@@ -37,6 +37,7 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
     challengeEntity.setDescription(dto.getDescription());
     challengeEntity.setOrdered(dto.isOrdered()); 
     challengeEntity.setUser(user);
+    challengeEntity.setImage(dto.getImageUrl());
 
     // 3. Map and link tasks if present 
     if (dto.getTasks() != null) {
