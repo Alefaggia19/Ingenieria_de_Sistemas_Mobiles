@@ -34,6 +34,13 @@ public class ChallengeController {
         return challengeService.getMyCreatedChallenges(principal.getName());
     }
 
+    //Para implementar el "Listado de desafíos nuevos" descrito en el documento
+    @GetMapping
+public List<ChallengeDto> getAllChallenges() {
+    // This endpoint returns all challenges for the 'Explore' section.
+    return challengeService.getAllChallenges();
+}
+
     // LISTARE SFIDE SEGUITE (Saved)
     @GetMapping("/my-saved")
     public List<ChallengeDto> getMySavedChallenges(Principal principal) {

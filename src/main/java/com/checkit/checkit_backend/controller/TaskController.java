@@ -32,9 +32,22 @@ public class TaskController {
     public Task addTaskToChallenge(@PathVariable Long challengeId, @RequestBody Task task) {
         return taskService.addTaskToChallenge(challengeId, task);
     }
+    
 
-    // Questi endpoint restano validi per operare su task singole
-    // (presupponendo di conoscere già l'ID della task)
+    //We expose the API to complete tasks. It is essential for supporting validation via QR and NFC
+    @PostMapping("/tasks/{id}/complete")
+public ResponseEntity<String> completeTask(@PathVariable Long id, 
+                                           @RequestBody String userResponse, 
+                                           Principal principal) {
+    // principal.getName() ottiene lo username dal JWT
+    boolean success = taskService.completeTask(id, principal.getName(), userResponse);
+    
+    if (success) {
+        return ResponseEntity.ok("Task completata con successo!");
+    } else {
+        return ResponseEntity.badRequest().body("Risposta errata o già completata.");
+    }
+}
 
     // GET /api/tasks/5 -> Restituisce la task con ID 5
     @GetMapping("/tasks/{id}")

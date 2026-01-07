@@ -6,6 +6,11 @@ public class TaskDto {
     private int taskOrder;
     private String type;
 
+    // Solution fields needed for creation
+    private String qrAnswer;
+    private String nfcAnswer;
+    private String textAnswer;
+
     // Costruttori, Getters, Setters
     public TaskDto() {}
 
@@ -18,4 +23,14 @@ public class TaskDto {
     public void setTaskOrder(int taskOrder) { this.taskOrder = taskOrder; }
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }
+
+    // Getters and Setters (Add for the new fields)
+    public String getQrAnswer() { return qrAnswer; }
+    public void setQrAnswer(String qrAnswer) { this.qrAnswer = qrAnswer; }
+
+    public String getNfcAnswer() { return nfcAnswer; }
+    public void setNfcAnswer(String nfcAnswer) { this.nfcAnswer = nfcAnswer; }
+
+    public String getTextAnswer() { return textAnswer; }
+    public void setTextAnswer(String textAnswer) { this.textAnswer = textAnswer; }
 }

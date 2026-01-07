@@ -23,27 +23,45 @@ public class ChallengeService {
     }
 
     /**
-     * Creates a new Challenge linked to the authenticated user.
-     */
-    public ChallengeDto createChallenge(NewChallengeDto challenge, String username) {
-        // Fetch the user from DB using the username from JWT
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+ * Creates a new Challenge with its tasks immediately.
+ * No draft option is available as per requirements
+ */
+public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
+    // 1. Find the author
+    User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Challenge challengeEntity = new Challenge();
-        challengeEntity.setName(challenge.getName());
-        challengeEntity.setDescription(challenge.getDescription());
-        challengeEntity.setUser(user);
-        challengeEntity.setOrdered(true);
-        // Link tasks to the challenge to ensure cascade saving works
-//        if (challenge.getTasks() != null) {
-//            for (Task task : challenge.getTasks()) {
-//                task.setChallenge(challenge);
-//            }
-//        }
-        // Save and convert to DTO
-        return toChallengeDto(challengeRepository.save(challengeEntity));
+    // 2. Create the Challenge entity
+    Challenge challengeEntity = new Challenge();
+    challengeEntity.setName(dto.getName());
+    challengeEntity.setDescription(dto.getDescription());
+    challengeEntity.setOrdered(dto.isOrdered()); 
+    challengeEntity.setUser(user);
+
+    // 3. Map and link tasks if present 
+    if (dto.getTasks() != null) {
+        List<Task> taskEntities = dto.getTasks().stream().map(taskDto -> {
+            Task task = new Task();
+            task.setName(taskDto.getName());
+            task.setType(taskDto.getType());
+            task.setTaskOrder(taskDto.getTaskOrder());
+            task.setQrAnswer(taskDto.getQrAnswer());
+            task.setNfcAnswer(taskDto.getNfcAnswer());
+            task.setTextAnswer(taskDto.getTextAnswer());
+            
+            // CRITICAL: Establish the link to the parent challenge
+            task.setChallenge(challengeEntity); 
+            return task;
+        }).toList();
+        
+        challengeEntity.setTasks(taskEntities);
     }
+
+    // 4. Save to DB (CascadeType.ALL in Challenge entity will handle saving tasks)
+    Challenge savedChallenge = challengeRepository.save(challengeEntity);
+    
+    return toChallengeDto(savedChallenge);
+}
 
     /**
      * Lists challenges created by the logged-in user.
@@ -78,6 +96,16 @@ public class ChallengeService {
         // Add to the list and save user to update the join table
         user.getSavedChallenges().add(challenge);
         userRepository.save(user);
+    }
+    
+    
+   /** Returns all challenges available in the database.
+    * Used for the "Explore" section of the app.
+    */
+    public List<ChallengeDto> getAllChallenges() {
+        return challengeRepository.findAll().stream()
+            .map(this::toChallengeDto)
+            .toList();
     }
 
     // --- MAPPERS (Entity -> DTO) ---
