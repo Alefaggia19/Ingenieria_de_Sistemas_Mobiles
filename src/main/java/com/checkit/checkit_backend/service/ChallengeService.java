@@ -37,7 +37,9 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
     challengeEntity.setDescription(dto.getDescription());
     challengeEntity.setOrdered(dto.isOrdered()); 
     challengeEntity.setUser(user);
-    challengeEntity.setImage(dto.getImageUrl());
+    // Salviamo la stringa Base64 direttamente nel campo image dell'entità
+    // Nota: Assicurati che nel database il campo sia di tipo TEXT o LOB
+    challengeEntity.setImage(dto.getImageBase64());
 
     // 3. Map and link tasks if present 
     if (dto.getTasks() != null) {
@@ -117,6 +119,7 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
         dto.setName(challenge.getName());
         dto.setDescription(challenge.getDescription());
         dto.setCreationDate(challenge.getCreationDate());
+        dto.setImageBase64(challenge.getImage()); // Mapping saved imagine 
         
         // Flatten User object to just authorName
         if (challenge.getUser() != null) {

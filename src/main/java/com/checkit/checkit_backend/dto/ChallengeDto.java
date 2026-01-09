@@ -14,6 +14,7 @@ public class ChallengeDto {
     private String authorName; // Appiattito da User.username
     private LocalDateTime creationDate;
     private List<TaskDto> tasks; // Usiamo il TaskDto!
+    private String imageBase64;
 
     // Costruttori, Getters, Setters
     public ChallengeDto() {}
@@ -31,4 +32,6 @@ public class ChallengeDto {
     public void setCreationDate(LocalDateTime creationDate) { this.creationDate = creationDate; }
     public List<TaskDto> getTasks() { return tasks; }
     public void setTasks(List<TaskDto> tasks) { this.tasks = tasks; }
+    public String getImageBase64() { return imageBase64; }
+    public void setImageBase64(String imageBase64) { this.imageBase64 = imageBase64; }
 }

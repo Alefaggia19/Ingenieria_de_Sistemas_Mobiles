@@ -16,8 +16,9 @@ public class Challenge {
     @Column(nullable = false)
     private String name;
 
-    @Column // Può essere nullo
-    private String image; // URL dell'immagine [cite: 98]
+    @Lob
+    @Column(columnDefinition = "TEXT") // O LONGTEXT per database come MySQL
+    private String image;
 
     @Column(length = 1000) // Diamo più spazio alla descrizione
     private String description; // [cite: 99]

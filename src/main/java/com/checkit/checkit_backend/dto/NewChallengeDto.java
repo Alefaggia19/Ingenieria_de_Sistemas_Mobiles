@@ -8,7 +8,7 @@ public class NewChallengeDto {
     private String name;
     private String description;
     private boolean isOrdered; 
-    private String imageUrl;
+    private String imageBase64; // Modified from imageUrl to imageBase64
     private List<TaskDto> tasks; // List of tasks to be created immediately
 
 
@@ -28,7 +28,6 @@ public class NewChallengeDto {
     public List<TaskDto> getTasks() { return tasks; }
     public void setTasks(List<TaskDto> tasks) { this.tasks = tasks; }
 
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
-
+    public String getImageBase64() { return imageBase64; }
+    public void setImageBase64(String imageBase64) { this.imageBase64 = imageBase64; }
 }
