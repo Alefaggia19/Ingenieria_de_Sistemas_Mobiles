@@ -22,6 +22,55 @@ public class ChallengeService {
         this.userRepository = userRepository;
     }
 
+
+/**
+     * Retrieves the full details of a challenge, 
+     * calculating the specific progress for the logged-in user
+     */
+    public ChallengeDto getChallengeDetail(Long challengeId, String username) {
+        // 1. Find the user and the relative Challenge from DB
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Challenge challenge = challengeRepository.findById(challengeId)
+                .orElseThrow(() -> new RuntimeException("Challenge not found"));
+
+        // 2. Use the mapper base for struttural datas
+        ChallengeDto dto = toChallengeDto(challenge);
+        
+        // 3. Verify if the usera saved the challenge
+        dto.setSaved(user.getSavedChallenges().contains(challenge));
+
+        // 4. Calculate how many people completed the chellenge
+        // Nota: Qui ipotizziamo una relazione o una query che conti chi ha finito tutti i task
+        dto.setCompletedByCount(challenge.getUsersWhoCompleted().size());
+
+        // 5. Logica Cruciale: Calculate the progress and the locked one
+        boolean previousTaskCompleted = true; // First task is always locked for default
+
+        for (TaskDto taskDto : dto.getTasks()) {
+            // Controlliamo se questo specifico compito è stato completato dall'utente 
+            boolean isCompleted = user.getCompletedTasks().stream()
+                    .anyMatch(t -> t.getId().equals(taskDto.getId()));
+            
+            taskDto.setCompleted(isCompleted);
+
+            // Gestione dello sblocco progressivo se la sfida è ordinata 
+            if (challenge.isOrdered()) {
+                // Un task è bloccato se quello precedente non è stato completato
+                taskDto.setLocked(!previousTaskCompleted);
+                // Aggiorniamo lo stato per il prossimo ciclo del loop
+                previousTaskCompleted = isCompleted;
+            } else {
+                // Se la sfida non è ordinata, nulla è bloccato a priori
+                taskDto.setLocked(false);
+            }
+        }
+
+        return dto;
+    }
+
+
+
     /**
  * Creates a new Challenge with its tasks immediately.
  * No draft option is available as per requirements
@@ -126,8 +175,12 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
             dto.setAuthorName(challenge.getUser().getUsername());
         }
         // Map tasks if present
+        // Ordiniamo i task per taskOrder prima di mapparli per garantire la logica del loop sopra
         if (challenge.getTasks() != null) {
-            dto.setTasks(challenge.getTasks().stream().map(this::toTaskDto).toList());
+            dto.setTasks(challenge.getTasks().stream()
+                    .sorted((t1, t2) -> Integer.compare(t1.getTaskOrder(), t2.getTaskOrder()))
+                    .map(this::toTaskDto)
+                    .toList());
         }
         return dto;
     }
@@ -138,6 +191,11 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
         dto.setName(task.getName());
         dto.setTaskOrder(task.getTaskOrder());
         dto.setType(task.getType());
+        // Mappiamo la "Pista" (Clue) come descrizione del compito per la vista dettaglio [cite: 66, 137]
+        if (task.getClues() != null && !task.getClues().isEmpty()) {
+            dto.setDescription(task.getClues().get(0).getTextClue());
+        }
+        
         return dto;
     }
 }

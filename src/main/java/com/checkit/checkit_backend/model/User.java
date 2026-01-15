@@ -45,6 +45,18 @@ public class User implements UserDetails{
         return Collections.emptyList();
     }
 
+    @ManyToMany
+    @JoinTable(
+        name = "task_completion",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "task_id")
+    )
+    private List<Task> completedTasks;
+
+    // Getter e Setter per completedTasks
+    public List<Task> getCompletedTasks() { return completedTasks; }
+    public void setCompletedTasks(List<Task> completedTasks) { this.completedTasks = completedTasks; }
+
 
     // Getters e Setters
     public User() {}

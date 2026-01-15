@@ -11,10 +11,13 @@ public class ChallengeDto {
     private Long id;
     private String name;
     private String description;
-    private String authorName; // Appiattito da User.username
+    private String authorName; 
     private LocalDateTime creationDate;
-    private List<TaskDto> tasks; // Usiamo il TaskDto!
+    private List<TaskDto> tasks; 
     private String imageBase64;
+
+    private int completedByCount; //For the description of Desafios
+    private boolean saved;
 
     // Costruttori, Getters, Setters
     public ChallengeDto() {}
@@ -34,4 +37,9 @@ public class ChallengeDto {
     public void setTasks(List<TaskDto> tasks) { this.tasks = tasks; }
     public String getImageBase64() { return imageBase64; }
     public void setImageBase64(String imageBase64) { this.imageBase64 = imageBase64; }
+    public int getCompletedByCount() { return completedByCount; }
+    public void setCompletedByCount(int completedByCount) { this.completedByCount = completedByCount; }
+    public boolean isSaved() { return saved; }
+    public void setSaved(boolean saved) { this.saved = saved; }
+
 }

@@ -1,6 +1,7 @@
 package com.checkit.checkit_backend.model;
 
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "tasks")
@@ -33,7 +34,13 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "challenge_id", nullable = false) // La FK per la sfida
     private Challenge challenge;
+
+    //
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Clue> clues;
     
+
+
     // NOTA: 'completed' non è qui!
     // Come da diagramma [cite: 118-121], 'TaskCompletion' è una tabella separata 
     // che lega User e Task. La logica di "completamento" sarà nel Service.
@@ -65,4 +72,7 @@ public class Task {
 
     public Challenge getChallenge() { return challenge; }
     public void setChallenge(Challenge challenge) { this.challenge = challenge; }
+
+    public List<Clue> getClues() { return clues; }
+    public void setClues(List<Clue> clues) { this.clues = clues; }
 }

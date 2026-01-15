@@ -5,6 +5,10 @@ public class TaskDto {
     private String name;
     private int taskOrder;
     private String type;
+    private String description; // Mapped from textClue
+
+    private boolean completed; // State of tareas
+    private boolean locked;
 
     // Solution fields needed for creation
     private String qrAnswer;
@@ -23,6 +27,12 @@ public class TaskDto {
     public void setTaskOrder(int taskOrder) { this.taskOrder = taskOrder; }
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }
+    public boolean isCompleted() { return completed; }
+    public void setCompleted(boolean completed) { this.completed = completed; }
+    public boolean isLocked() { return locked; }
+    public void setLocked(boolean locked) { this.locked = locked; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
     // Getters and Setters (Add for the new fields)
     public String getQrAnswer() { return qrAnswer; }
@@ -33,4 +43,5 @@ public class TaskDto {
 
     public String getTextAnswer() { return textAnswer; }
     public void setTextAnswer(String textAnswer) { this.textAnswer = textAnswer; }
+    
 }

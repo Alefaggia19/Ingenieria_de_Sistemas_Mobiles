@@ -21,23 +21,32 @@ public class Challenge {
     private String image;
 
     @Column(length = 1000) // Diamo più spazio alla descrizione
-    private String description; // [cite: 99]
+    private String description; 
 
     @Column(name = "is_ordered")
-    private boolean isOrdered; // [cite: 100]
+    private boolean isOrdered; 
 
     @CreationTimestamp // Imposta automaticamente la data di creazione
     @Column(name = "creation_date", updatable = false)
-    private LocalDateTime creationDate; // [cite: 102]
+    private LocalDateTime creationDate; 
 
     // Relazione: Molte sfide appartengono a Un Utente (l'autore)
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false) // Questa è la Foreign Key (FK) [cite: 101]
+    @JoinColumn(name = "user_id", nullable = false) // Questa è la Foreign Key (FK)
     private User user;
 
     // Relazione: Una sfida ha Molte attività (Task)
     @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
+
+    //Already Completed tasks
+    @ManyToMany
+    @JoinTable(
+        name = "challenge_completions",
+        joinColumns = @JoinColumn(name = "challenge_id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> usersWhoCompleted;
 
     // Costruttori, Getters e Setters
     public Challenge() {}
@@ -66,4 +75,7 @@ public class Challenge {
 
     public List<Task> getTasks() { return tasks; }
     public void setTasks(List<Task> tasks) { this.tasks = tasks; }
+
+    public List<User> getUsersWhoCompleted() { return usersWhoCompleted; }
+    public void setUsersWhoCompleted(List<User> usersWhoCompleted) { this.usersWhoCompleted = usersWhoCompleted; }
 }
