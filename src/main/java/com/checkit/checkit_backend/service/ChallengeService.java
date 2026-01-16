@@ -4,6 +4,7 @@ import com.checkit.checkit_backend.dto.ChallengeDto;
 import com.checkit.checkit_backend.dto.NewChallengeDto;
 import com.checkit.checkit_backend.dto.TaskDto;
 import com.checkit.checkit_backend.model.Challenge;
+import com.checkit.checkit_backend.model.Clue;
 import com.checkit.checkit_backend.model.Task;
 import com.checkit.checkit_backend.model.User;
 import com.checkit.checkit_backend.repository.ChallengeRepository;
@@ -100,6 +101,14 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
             task.setQrAnswer(taskDto.getQrAnswer());
             task.setNfcAnswer(taskDto.getNfcAnswer());
             task.setTextAnswer(taskDto.getTextAnswer());
+
+            // SALVATAGGIO DELL'INDIZIO (CLUE)
+        if (taskDto.getTextClue() != null && !taskDto.getTextClue().isEmpty()) {
+            Clue clue = new Clue();
+            clue.setTextClue(taskDto.getTextClue());
+            clue.setTask(task);
+            task.setClues(List.of(clue)); // Collega l'indizio al task
+        }
             
             // CRITICAL: Establish the link to the parent challenge
             task.setChallenge(challengeEntity); 
@@ -150,6 +159,17 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
         userRepository.save(user);
     }
     
+
+    public void unfollowChallenge(Long challengeId, String username) {
+    User user = userRepository.findByRealname(username)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+    Challenge challenge = challengeRepository.findById(challengeId)
+            .orElseThrow(() -> new RuntimeException("Challenge not found"));
+    
+    // Rimuove la sfida dalla lista dei salvati (ManyToMany)
+    user.getSavedChallenges().remove(challenge);
+    userRepository.save(user);
+}
     
    /** Returns all challenges available in the database.
     * Used for the "Explore" section of the app.

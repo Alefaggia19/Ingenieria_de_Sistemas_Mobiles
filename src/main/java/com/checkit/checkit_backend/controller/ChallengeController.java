@@ -4,6 +4,8 @@ import com.checkit.checkit_backend.dto.ChallengeDto;
 import com.checkit.checkit_backend.dto.NewChallengeDto;
 import com.checkit.checkit_backend.model.Challenge;
 import com.checkit.checkit_backend.service.ChallengeService;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 
@@ -53,5 +55,17 @@ public List<ChallengeDto> getAllChallenges() {
         challengeService.followChallenge(id, principal.getName());
     }
     
-    // ... (altri metodi GET publici)
+    //Endpoint per il dettaglio specifico
+    @GetMapping("/{id}")
+    public ChallengeDto getChallengeDetail(@PathVariable Long id, Principal principal) {
+        return challengeService.getChallengeDetail(id, principal.getName());
+    }
+
+    // 2. Endpoint per eliminare una sfida dai salvati
+    @DeleteMapping("/{id}/follow")
+    public ResponseEntity<Void> unfollowChallenge(@PathVariable Long id, Principal principal) {
+        challengeService.unfollowChallenge(id, principal.getName());
+        return ResponseEntity.noContent().build();
+    }
+
 }

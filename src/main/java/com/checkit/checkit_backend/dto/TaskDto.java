@@ -7,6 +7,8 @@ public class TaskDto {
     private String type;
     private String description; // Mapped from textClue
 
+    private String textClue;
+
     private boolean completed; // State of tareas
     private boolean locked;
 
@@ -33,6 +35,8 @@ public class TaskDto {
     public void setLocked(boolean locked) { this.locked = locked; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+    public String getTextClue() { return textClue; }
+    public void setTextClue(String textClue) { this.textClue = textClue; }
 
     // Getters and Setters (Add for the new fields)
     public String getQrAnswer() { return qrAnswer; }
