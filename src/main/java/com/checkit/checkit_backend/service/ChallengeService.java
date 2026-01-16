@@ -29,7 +29,7 @@ public class ChallengeService {
      */
     public ChallengeDto getChallengeDetail(Long challengeId, String username) {
         // 1. Find the user and the relative Challenge from DB
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new RuntimeException("Challenge not found"));
@@ -77,7 +77,7 @@ public class ChallengeService {
  */
 public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
     // 1. Find the author
-    User user = userRepository.findByUsername(username)
+    User user = userRepository.findByEmail(username)
             .orElseThrow(() -> new RuntimeException("User not found"));
 
     // 2. Create the Challenge entity
@@ -119,7 +119,7 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
      * Lists challenges created by the logged-in user.
      */
     public List<ChallengeDto> getMyCreatedChallenges(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow();
+        User user = userRepository.findByEmail(username).orElseThrow();
         // Convert the list of entities to a list of DTOs
         return challengeRepository.findByUserId(user.getId()).stream()
                 .map(this::toChallengeDto)
@@ -130,7 +130,7 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
      * Lists challenges that the user is following (saved).
      */
     public List<ChallengeDto> getMySavedChallenges(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow();
+        User user = userRepository.findByEmail(username).orElseThrow();
         // Retrieve saved challenges from the ManyToMany relationship
         return user.getSavedChallenges().stream()
                 .map(this::toChallengeDto)
@@ -141,7 +141,7 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
      * Allows a user to follow (save) a challenge.
      */
     public void followChallenge(Long challengeId, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow();
+        User user = userRepository.findByEmail(username).orElseThrow();
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new RuntimeException("Challenge not found"));
         

@@ -33,7 +33,7 @@ public class TaskService {
      * Validates the user's response and marks the task as completed.
      */
     public boolean completeTask(Long taskId, String username, String userResponse) {
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found"));

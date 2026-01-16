@@ -15,11 +15,11 @@ public class UserDetailsService {
     }
 
 
-    public UserDTO loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDTO loadUserByUsername(String email) throws UsernameNotFoundException {
         // Since the User entity implements UserDetails, we can return it directly.
-        var user = repository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        var user = repository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + email));
 
-        return new UserDTO(user.getId(), user.getUsername());
+        return new UserDTO(user.getUsername(),user.getPassword(),user.getEmail());
     }
 }

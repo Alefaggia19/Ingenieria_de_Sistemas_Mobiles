@@ -2,6 +2,7 @@ package com.checkit.checkit_backend.controller;
 
 import com.checkit.checkit_backend.model.User;
 import com.checkit.checkit_backend.repository.UserRepository;
+import com.checkit.checkit_backend.service.UserDetailsAuthService;
 import com.checkit.checkit_backend.utils.JwtUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -9,7 +10,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,19 +21,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsAuthService userDetailsAuthService;
     private final JwtUtil jwtUtil;
     // Added dependencies for registration
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     public AuthController(AuthenticationManager authenticationManager, 
-                          UserDetailsService userDetailsService, 
+                          UserDetailsAuthService userDetailsAuthService,
                           JwtUtil jwtUtil, 
                           UserRepository userRepository, 
                           PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
-        this.userDetailsService = userDetailsService;
+        this.userDetailsAuthService = userDetailsAuthService;
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -45,12 +45,12 @@ public class AuthController {
         // 1. Authenticate user using credentials (checks password match)
         try{
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
+                    new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword())
             );
 
             // 2. Load the authenticated UserDetails
-            final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
-
+            //final UserDetails userDetails = userDetailsAuthService.loadUserByUsername(authRequest.getEmail());
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             // 3. Generate JWT Token
             final String jwt = jwtUtil.generateToken(userDetails);
 
@@ -66,9 +66,9 @@ public class AuthController {
 
     // --- REGISTER ENDPOINT (NEW) ---
     @PostMapping("/register")
-    public RegisterResponse registerUser(@RequestBody AuthRequest registerRequest) {
+    public RegisterResponse registerUser(@RequestBody RegisterRequest registerRequest) {
         // 1. Check if username already exists
-        if (userRepository.findByUsername(registerRequest.getUsername()).isPresent()) {
+        if (userRepository.findByEmail(registerRequest.email()).isPresent()) {
             return new RegisterResponse("Nombre de usuario ya registrado");
 
 
@@ -76,9 +76,10 @@ public class AuthController {
 
         // 2. Create new User entity
         User newUser = new User();
-        newUser.setUsername(registerRequest.getUsername());
+        newUser.setEmail(registerRequest.email());
+        newUser.setUsername(registerRequest.username());
         // CRITICAL: Always encode passwords before saving to DB
-        newUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        newUser.setPassword(passwordEncoder.encode(registerRequest.password()));
 
         // 3. Save to Database
         userRepository.save(newUser);
@@ -88,10 +89,11 @@ public class AuthController {
 }
 
 // Simple Request/Response DTOs (Records)
-record AuthRequest(String username, String password) {
-    public String getUsername() { return username; }
+record AuthRequest(String email, String password) {
+    public String getEmail() { return email; }
     public String getPassword() { return password; }
 }
 record AuthResponse(String errorResponse,String token, String username) {}
 
+record RegisterRequest(String username,String email,String password){}
 record RegisterResponse(String errorMessage){}

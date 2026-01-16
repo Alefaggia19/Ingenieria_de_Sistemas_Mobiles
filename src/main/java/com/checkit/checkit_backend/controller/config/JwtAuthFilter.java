@@ -1,6 +1,7 @@
 package com.checkit.checkit_backend.controller.config;
 
 
+import com.checkit.checkit_backend.service.UserDetailsAuthService;
 import com.checkit.checkit_backend.utils.JwtUtil;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,11 +21,11 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsAuthService userDetailsAuthService;
 
-    public JwtAuthFilter(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
+    public JwtAuthFilter(JwtUtil jwtUtil, UserDetailsAuthService userDetailsAuthService) {
         this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
+        this.userDetailsAuthService = userDetailsAuthService;
     }
 
     @Override
@@ -44,7 +45,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         userEmail = jwtUtil.extractUsername(jwt);
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+            UserDetails userDetails = this.userDetailsAuthService.loadUserByUsername(userEmail);
 
             if (jwtUtil.validateToken(jwt, userDetails)) {
                 // Manually set the authentication in the SecurityContext

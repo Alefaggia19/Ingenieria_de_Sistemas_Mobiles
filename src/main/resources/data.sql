@@ -1,5 +1,3 @@
-INSERT INTO USERS (username,password)
+INSERT INTO USERS (realname,password,email)
 VALUES
-('admin','$2a$12$Akz1PcXyaQhFpTEWSF2A6e92PxYiPrfOihVz/NVpiteGQWJO3OQ8K'),
-('abi','contrasena'),
-('alez','alez');
+('admin','$2a$12$Akz1PcXyaQhFpTEWSF2A6e92PxYiPrfOihVz/NVpiteGQWJO3OQ8K','admin@checkit.com');

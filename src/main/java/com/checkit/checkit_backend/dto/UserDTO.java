@@ -2,19 +2,25 @@ package com.checkit.checkit_backend.dto;
 
 public class UserDTO {
 
-    Long id;
     String username;
+    String email;
+    String password;
 
-    public UserDTO(Long id, String username) {
-        this.id = id;
+    public UserDTO(String username,String password,String email) {
         this.username = username;
+        this.email = email;
+        this.password = password;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public Long getId() {
-        return id;
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }

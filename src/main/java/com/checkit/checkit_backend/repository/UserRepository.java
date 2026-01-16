@@ -9,5 +9,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 
     // Spring capirà automaticamente: "trova un utente tramite il suo username"
-    Optional<User> findByUsername(String username);
+    Optional<User> findByRealname(String username);
+
+    Optional<User> findByEmail(String email);
 }
