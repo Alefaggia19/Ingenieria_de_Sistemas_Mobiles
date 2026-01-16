@@ -15,6 +15,7 @@ public class User implements UserDetails{
     @GeneratedValue(strategy = GenerationType.IDENTITY) // ID auto-incrementante
     private Long id;
 
+
     @Column(nullable = false, unique = true) // Non può essere nullo ed è unico
     private String username;
 
