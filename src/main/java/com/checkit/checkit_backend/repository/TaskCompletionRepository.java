@@ -8,4 +8,6 @@ public interface TaskCompletionRepository extends JpaRepository<TaskCompletion, 
     // Controlla se l'utente ha già completato questa task
     boolean existsByUserIdAndTaskId(Long userId, Long taskId);
     long countByCompletedAtAfter(LocalDateTime date);
+    long countByTaskId(Long taskId);
+
 }
