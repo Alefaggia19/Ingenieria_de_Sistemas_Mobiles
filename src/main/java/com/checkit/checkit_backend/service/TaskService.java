@@ -1,9 +1,7 @@
 package com.checkit.checkit_backend.service;
 
-import com.checkit.checkit_backend.model.Task;
-import com.checkit.checkit_backend.model.TaskCompletion;
-import com.checkit.checkit_backend.model.User;
-import com.checkit.checkit_backend.model.Challenge;
+import com.checkit.checkit_backend.dto.TaskDetailDTO;
+import com.checkit.checkit_backend.model.*;
 import com.checkit.checkit_backend.repository.TaskCompletionRepository;
 import com.checkit.checkit_backend.repository.TaskRepository;
 import com.checkit.checkit_backend.repository.ChallengeRepository;
@@ -75,8 +73,22 @@ public class TaskService {
         return taskRepository.findByChallengeId(challengeId);
     }
 
-    public Task getTaskById(Long id) {
-        return taskRepository.findById(id).orElse(null);
+    public TaskDetailDTO getTaskById(Long id,Long userId) {
+
+        var taskDTO  = new TaskDetailDTO();
+        var taskEntity = taskRepository.findById(id).orElse(null);
+        assert taskEntity != null;
+        taskDTO.setChallengeID(taskEntity.getChallenge().getId());
+        taskDTO.setId(taskEntity.getId());
+        taskDTO.setName(taskEntity.getName());
+        taskDTO.setTaskOrder(taskEntity.getTaskOrder());
+        taskDTO.setTextClue(taskEntity.getClues().stream().map(Clue::getTextClue).toList());
+        taskDTO.setnCompletions(taskCompletionRepository.countByTaskId(id));
+        taskDTO.setCompleted(taskCompletionRepository.existsByUserIdAndTaskId(userId,id));
+        taskDTO.setType(taskEntity.getType());
+
+        return taskDTO;
+
     }
 
     public Task addTaskToChallenge(Long challengeId, Task task) {

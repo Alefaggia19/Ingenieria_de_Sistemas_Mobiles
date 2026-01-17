@@ -3,7 +3,10 @@ package com.checkit.checkit_backend.controller;
 import com.checkit.checkit_backend.dto.TaskDetailDTO;
 import com.checkit.checkit_backend.model.Clue;
 import com.checkit.checkit_backend.model.Task;
+import com.checkit.checkit_backend.model.TaskCompletion;
+import com.checkit.checkit_backend.model.User;
 import com.checkit.checkit_backend.service.TaskService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import org.springframework.http.ResponseEntity;
@@ -53,16 +56,9 @@ public ResponseEntity<String> completeTask(@PathVariable Long id,
 
     // GET /api/tasks/5 -> Restituisce la task con ID 5
     @GetMapping("/tasks/{id}")
-    public TaskDetailDTO getTaskById(@PathVariable Long id) {
-        var taskDTO  = new TaskDetailDTO();
-        var taskEntity = taskService.getTaskById(id);
-        taskDTO.setChallengeID(taskEntity.getChallenge().getId());
-        taskDTO.setId(taskEntity.getId());
-        taskDTO.setName(taskEntity.getName());
-        taskDTO.setTaskOrder(taskEntity.getTaskOrder());
-        taskDTO.setTextClue(taskEntity.getClues().stream().map(Clue::getTextClue).toList());
-        //taskDTO.setnCompletions();
-        return taskDTO;
+    public TaskDetailDTO getTaskById(@PathVariable Long id,@AuthenticationPrincipal User user) {
+
+        return taskService.getTaskById(id,user.getId());
     }
 
     // PUT /api/tasks/5 -> Aggiorna la task 5
