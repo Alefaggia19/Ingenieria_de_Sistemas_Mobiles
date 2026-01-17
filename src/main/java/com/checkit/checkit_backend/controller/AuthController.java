@@ -10,6 +10,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import com.checkit.checkit_backend.model.UserSession;
+import com.checkit.checkit_backend.repository.UserSessionRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,17 +28,21 @@ public class AuthController {
     // Added dependencies for registration
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    // 1. Added repository for sessions
+    private final UserSessionRepository userSessionRepository;
 
     public AuthController(AuthenticationManager authenticationManager, 
                           UserDetailsAuthService userDetailsAuthService,
                           JwtUtil jwtUtil, 
                           UserRepository userRepository, 
-                          PasswordEncoder passwordEncoder) {
+                          PasswordEncoder passwordEncoder,
+                        UserSessionRepository userSessionRepository) {
         this.authenticationManager = authenticationManager;
         this.userDetailsAuthService = userDetailsAuthService;
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userSessionRepository = userSessionRepository;
     }
 
     // --- LOGIN ENDPOINT ---
@@ -51,6 +57,18 @@ public class AuthController {
             // 2. Load the authenticated UserDetails
             //final UserDetails userDetails = userDetailsAuthService.loadUserByUsername(authRequest.getEmail());
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+            // --- KPI'S LOGIC: REGISTRATION OF A SESSION ---
+            // Take the user from the database for associate him to his  session
+            User user = userRepository.findByEmail(authRequest.getEmail())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            
+            // Save the session to calcolate la Tasa de Conversión
+            userSessionRepository.save(new UserSession(user));
+            // ------------------------------------------
+
+
+
             // 3. Generate JWT Token
             final String jwt = jwtUtil.generateToken(userDetails);
 
