@@ -49,6 +49,11 @@ public List<ChallengeDto> getAllChallenges() {
         return challengeService.getMySavedChallenges(principal.getName());
     }
 
+    @GetMapping("/in-progress")
+    public List<ChallengeDto> getMyInProgressChallenges(Principal principal){
+        return challengeService.getMyInProgressChallenges(principal.getName());
+    }
+
     // SEGUIRE UNA SFIDA
     @PostMapping("/{id}/follow")
     public void followChallenge(@PathVariable Long id, Principal principal) {

@@ -241,4 +241,12 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
         
         return dto;
     }
+
+    public List<ChallengeDto> getMyInProgressChallenges(String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+           var challenges = challengeRepository.findAllChallengesWithCompletionsByUser(user.getId());
+        return challenges.stream().map(this::toChallengeDto).toList();
+
+    }
 }

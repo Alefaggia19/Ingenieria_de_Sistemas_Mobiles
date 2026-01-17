@@ -9,5 +9,4 @@ public interface TaskCompletionRepository extends JpaRepository<TaskCompletion, 
     boolean existsByUserIdAndTaskId(Long userId, Long taskId);
     long countByCompletedAtAfter(LocalDateTime date);
     long countByTaskId(Long taskId);
-
 }
