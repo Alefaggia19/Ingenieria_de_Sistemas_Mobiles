@@ -69,8 +69,17 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints (login, registration)
                         .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+
+                        // 2. ACCESS TO CONSOLE H2
+                       // Senza questa, non potrai entrare in /h2-console
+                         .requestMatchers("/h2-console/**").permitAll()
+
+                        //MUST BE PRIVATE, ITS JUST FOR TESTING THE JSON
+                        .requestMatchers("/api/admin/stats").permitAll() // Aggiungi questa riga temporaneamente
+                        
                         // All other requests require authentication
                         .anyRequest().authenticated()
+
                 )
 
                 // 3. Set session management to stateless (NO SESSIONS)
@@ -79,6 +88,8 @@ public class SecurityConfig {
                 // 4. Register the custom JWT filter BEFORE the default authentication filter
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
+
+                .headers(headers -> headers.frameOptions(frame -> frame.disable())) // Necessario per H2 console
 
                 .build();// Main configuration for the security filter chain
 
