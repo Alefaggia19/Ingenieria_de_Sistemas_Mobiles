@@ -29,7 +29,11 @@ public class UserDetailsService {
         var user = repository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + email));
         user.setRealname(realName);
-        user.setPassword(passwordEncoder.encode(password));
+        if (password != null){
+            user.setPassword(passwordEncoder.encode(password));
+
+        }
+        repository.save(user);
 
     }
 }

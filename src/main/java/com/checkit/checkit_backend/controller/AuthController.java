@@ -95,7 +95,7 @@ public class AuthController {
         // 2. Create new User entity
         User newUser = new User();
         newUser.setEmail(registerRequest.email());
-        newUser.setUsername(registerRequest.username());
+        newUser.setRealname(registerRequest.username());
         // CRITICAL: Always encode passwords before saving to DB
         newUser.setPassword(passwordEncoder.encode(registerRequest.password()));
 
