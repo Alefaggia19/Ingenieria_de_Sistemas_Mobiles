@@ -68,4 +68,11 @@ public List<ChallengeDto> getAllChallenges() {
         return ResponseEntity.noContent().build();
     }
 
+    //Delete a challenge
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteChallenge(@PathVariable Long id, Principal principal) {
+        challengeService.deleteChallenge(id, principal.getName());
+        return ResponseEntity.noContent().build();
+    }
+
 }

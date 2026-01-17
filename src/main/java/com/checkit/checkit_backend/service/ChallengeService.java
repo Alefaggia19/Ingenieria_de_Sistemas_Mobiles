@@ -12,6 +12,7 @@ import com.checkit.checkit_backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
+
 @Service
 public class ChallengeService {
 
@@ -28,15 +29,18 @@ public class ChallengeService {
      * Retrieves the full details of a challenge, 
      * calculating the specific progress for the logged-in user
      */
-    public ChallengeDto getChallengeDetail(Long challengeId, String username) {
+    public ChallengeDto getChallengeDetail(Long challengeId, String currentUserEmail) {
         // 1. Find the user and the relative Challenge from DB
-        User user = userRepository.findByEmail(username)
+        User user = userRepository.findByEmail(currentUserEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new RuntimeException("Challenge not found"));
 
         // 2. Use the mapper base for struttural datas
         ChallengeDto dto = toChallengeDto(challenge);
+
+        boolean isAuthor = challenge.getUser().getEmail().equals(currentUserEmail);
+        dto.setAuthor(isAuthor);
         
         // 3. Verify if the usera saved the challenge
         dto.setSaved(user.getSavedChallenges().contains(challenge));
@@ -161,7 +165,7 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
     
 
     public void unfollowChallenge(Long challengeId, String username) {
-    User user = userRepository.findByRealname(username)
+    User user = userRepository.findByEmail(username)
             .orElseThrow(() -> new RuntimeException("User not found"));
     Challenge challenge = challengeRepository.findById(challengeId)
             .orElseThrow(() -> new RuntimeException("Challenge not found"));
@@ -178,6 +182,25 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
         return challengeRepository.findAll().stream()
             .map(this::toChallengeDto)
             .toList();
+    }
+
+
+    public void deleteChallenge(Long challengeId, String currentUserEmail) {
+        // 1. Trova la sfida
+        Challenge challenge = challengeRepository.findById(challengeId)
+                .orElseThrow(() -> new RuntimeException("Challenge not found"));
+
+        // 2. Trova l'utente che sta facendo la richiesta
+        User user = userRepository.findByEmail(currentUserEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 3. LOGICA DI SICUREZZA: Verifica se l'utente è l'autore
+        if (!challenge.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("No tienes permisos para eliminar este desafío");
+        }
+
+        // 4. Elimina (la relazione CascadeType.ALL nel modello Challenge gestirà i task orfani)
+        challengeRepository.delete(challenge);
     }
 
     // --- MAPPERS (Entity -> DTO) ---

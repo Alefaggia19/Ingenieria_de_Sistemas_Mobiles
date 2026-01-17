@@ -15,6 +15,7 @@ public class ChallengeDto {
     private LocalDateTime creationDate;
     private List<TaskDto> tasks; 
     private String imageBase64;
+    private boolean isAuthor;
 
     private int completedByCount; //For the description of Desafios
     private boolean saved;
@@ -41,5 +42,7 @@ public class ChallengeDto {
     public void setCompletedByCount(int completedByCount) { this.completedByCount = completedByCount; }
     public boolean isSaved() { return saved; }
     public void setSaved(boolean saved) { this.saved = saved; }
+    public boolean isAuthor() { return isAuthor; }
+    public void setAuthor(boolean author) { this.isAuthor = author; }
 
 }
