@@ -19,15 +19,31 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class UserController {
 
-    private final UserDetailsService userDetailsAuthService;
-
-    public UserController(UserDetailsService userDetailService){
-        this.userDetailsAuthService = userDetailService;
+    private final UserDetailsAuthService userDetailsAuthService;
+    private final UserDetailsService userDetailsService;
+    public UserController(UserDetailsService userDetailService,UserDetailsAuthService userDetailsAuthService){
+        this.userDetailsAuthService = userDetailsAuthService;
+        this.userDetailsService = userDetailService;
     }
 
     @GetMapping("/info")
     public UserDTO getOwnUserDetails(Principal principal){
-        return userDetailsAuthService.loadUserByUsername(principal.getName());
+        return userDetailsService.loadUserByUsername(principal.getName());
     }
+    @PostMapping("/change-details")
+    public BasicResponse changeUserDetails(@RequestBody UserDetailsToChange userDetailsToChange,Principal principal){
+        try{
+            userDetailsService.changeUserDetails(principal.getName(),
+                    userDetailsToChange.realName,
+                    userDetailsToChange.password);
+            return new BasicResponse(null);
+        }catch (Exception e){
+            return new BasicResponse(e.getMessage());
+        }
+    }
+
+
+    record UserDetailsToChange(String realName,String password){}
+    record BasicResponse(String errorMessage){}
 
 }
