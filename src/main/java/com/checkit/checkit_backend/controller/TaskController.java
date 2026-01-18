@@ -45,7 +45,8 @@ public ResponseEntity<String> completeTask(@PathVariable Long id,
                                            @RequestBody String userResponse, 
                                            Principal principal) {
     // principal.getName() ottiene lo username dal JWT
-    boolean success = taskService.completeTask(id, principal.getName(), userResponse);
+
+    boolean success = taskService.completeTask(id, principal.getName(), userResponse.replace("\"",""));
     
     if (success) {
         return ResponseEntity.ok("Task completata con successo!");

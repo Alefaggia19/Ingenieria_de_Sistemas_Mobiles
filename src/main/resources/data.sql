@@ -47,28 +47,28 @@ VALUES ('Desafío Antiguo', 'Sfida creata tempo fa', false, 1, DATEADD('DAY', -1
 
 --- 3. TASKS -----
 -- Task por challenge 1 (Ruta Romana)
-INSERT INTO tasks (name, type, task_order, challenge_id) VALUES ('Puerta del Puente', 'QR', 1, 1);
-INSERT INTO tasks (name, type, task_order, challenge_id) VALUES ('Templo Romano', 'TEXT', 2, 1);
+INSERT INTO tasks (name, type, task_order, challenge_id,qr_answer) VALUES ('Puerta del Puente', 'QR', 1, 1,'qr');
+INSERT INTO tasks (name, type, task_order, challenge_id,text_answer) VALUES ('Templo Romano', 'TEXT', 2, 1,'text');
 
 -- Task por challenge 2 (Misteri di Cordoba)
-INSERT INTO tasks (name, type, task_order, challenge_id) VALUES ('La Facultad de Filosofía', 'NFC', 1, 2);
-INSERT INTO tasks (name, type, task_order, challenge_id) VALUES ('Callejón del Pañuelo', 'TEXT', 2, 2);
+INSERT INTO tasks (name, type, task_order, challenge_id,nfc_answer) VALUES ('La Facultad de Filosofía', 'NFC', 1, 2,'nfc');
+INSERT INTO tasks (name, type, task_order, challenge_id,text_answer) VALUES ('Callejón del Pañuelo', 'TEXT', 2, 2,'text');
 
 -- Task por challenge 3 (Tour Mezquita)
-INSERT INTO tasks (name, type, task_order, challenge_id) VALUES ('Patio de los Naranjos', 'QR', 1, 3);
-INSERT INTO tasks (name, type, task_order, challenge_id) VALUES ('El Mihrab', 'NFC', 2, 3);
+INSERT INTO tasks (name, type, task_order, challenge_id,qr_answer) VALUES ('Patio de los Naranjos', 'QR', 1, 3,'qr');
+INSERT INTO tasks (name, type, task_order, challenge_id,nfc_answer) VALUES ('El Mihrab', 'NFC', 2, 3,'nfc');
 
 -- Task por challenge 4 (Misterios Judería)
-INSERT INTO tasks (name, type, task_order, challenge_id) VALUES ('Estatua de Maimónides', 'QR', 1, 4);
-INSERT INTO tasks (name, type, task_order, challenge_id) VALUES ('Sinagoga de Córdoba', 'TEXT', 2, 4);
+INSERT INTO tasks (name, type, task_order, challenge_id,qr_answer) VALUES ('Estatua de Maimónides', 'QR', 1, 4,'qr');
+INSERT INTO tasks (name, type, task_order, challenge_id,text_answer) VALUES ('Sinagoga de Córdoba', 'TEXT', 2, 4,'text');
 
 -- Task por challenge 5 (Patios de Córdoba)
-INSERT INTO tasks (name, type, task_order, challenge_id) VALUES ('Palacio de Viana', 'NFC', 1, 5);
-INSERT INTO tasks (name, type, task_order, challenge_id) VALUES ('Patio de San Basilio', 'QR', 2, 5);
+INSERT INTO tasks (name, type, task_order, challenge_id,nfc_answer) VALUES ('Palacio de Viana', 'NFC', 1, 5,'nfc');
+INSERT INTO tasks (name, type, task_order, challenge_id,qr_answer) VALUES ('Patio de San Basilio', 'QR', 2, 5,'qr');
 
 -- Task por challenge 6 (Desafío Antiguo)
-INSERT INTO tasks (name, type, task_order, challenge_id) VALUES ('Vieja Inscripción', 'TEXT', 1, 6);
-INSERT INTO tasks (name, type, task_order, challenge_id) VALUES ('Puerta de Almodóvar', 'QR', 2, 6);
+INSERT INTO tasks (name, type, task_order, challenge_id,text_answer) VALUES ('Vieja Inscripción', 'TEXT', 1, 6,'text');
+INSERT INTO tasks (name, type, task_order, challenge_id,qr_answer) VALUES ('Puerta de Almodóvar', 'QR', 2, 6,'qr');
 
 -- 4. Inserimento NPS (KPI: Net Promoter Score)
 INSERT INTO nps_ratings (score, user_id, timestamp) VALUES (10, 1, CURRENT_TIMESTAMP);
