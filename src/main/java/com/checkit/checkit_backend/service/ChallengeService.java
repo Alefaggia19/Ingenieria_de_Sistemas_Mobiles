@@ -138,15 +138,14 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
             // CRITICAL: Establish the link to the parent challenge
             task.setChallenge(challengeEntity); 
             return task;
-        }).toList();
+        }).collect(java.util.stream.Collectors.toList());
         
         challengeEntity.setTasks(taskEntities);
     }
 
     // 4. Save to DB (CascadeType.ALL in Challenge entity will handle saving tasks)
     Challenge savedChallenge = challengeRepository.save(challengeEntity);
-    
-    return toChallengeDto(challengeRepository.save(challengeEntity));
+    return toChallengeDto(savedChallenge);
 }
 
     /**
