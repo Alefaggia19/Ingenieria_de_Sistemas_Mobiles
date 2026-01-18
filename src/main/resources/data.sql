@@ -85,3 +85,10 @@ INSERT INTO nps_ratings (score, user_id, timestamp) VALUES (7.0, 1, CURRENT_TIME
 INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (1, 1, CURRENT_TIMESTAMP);
 INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (2, 1, CURRENT_TIMESTAMP);
 INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (1, 2, CURRENT_TIMESTAMP);
+
+-- Añadimos pistas a la tarea 1
+INSERT INTO clues (task_id,text_clue ) VALUES (3,'¿Alguien te está observando?');
+INSERT INTO clues (task_id,text_clue ) VALUES (3,'Siempre desconfia de los sotanos');
+
+INSERT INTO clues (task_id,text_clue ) VALUES (4,'Siempre mira a tu espalda');
+
