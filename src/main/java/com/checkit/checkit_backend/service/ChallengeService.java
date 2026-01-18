@@ -11,6 +11,7 @@ import com.checkit.checkit_backend.repository.ChallengeRepository;
 import com.checkit.checkit_backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -39,18 +40,18 @@ public class ChallengeService {
         // 2. Use the mapper base for struttural datas
         ChallengeDto dto = toChallengeDto(challenge);
 
-        boolean isAuthor = challenge.getUser().getEmail().equals(currentUserEmail);
-        dto.setAuthor(isAuthor);
-        
-        // 3. Verify if the usera saved the challenge
+        dto.setAuthor(challenge.getUser().getEmail().equals(currentUserEmail));
         dto.setSaved(user.getSavedChallenges().contains(challenge));
-
-        // 4. Calculate how many people completed the chellenge
-        // Nota: Qui ipotizziamo una relazione o una query che conti chi ha finito tutti i task
         dto.setCompletedByCount(challenge.getUsersWhoCompleted().size());
 
-        // 5. Logica Cruciale: Calculate the progress and the locked one
-        boolean previousTaskCompleted = true; // First task is always locked for default
+        // 3. PUNTO 4: Ordinamento dei task
+        // È fondamentale ordinare PRIMA di calcolare lo stato 'locked'
+        List<TaskDto> sortedTasks = dto.getTasks().stream()
+            .sorted((t1, t2) -> Integer.compare(t1.getTaskOrder(), t2.getTaskOrder()))
+            .toList();
+
+        // 4. LOGICA UNIFICATA: Calcolo 'completed' e 'locked'
+        boolean previousTaskCompleted = true;
 
         for (TaskDto taskDto : dto.getTasks()) {
             // Controlliamo se questo specifico compito è stato completato dall'utente 
@@ -69,9 +70,11 @@ public class ChallengeService {
                 // Se la sfida non è ordinata, nulla è bloccato a priori
                 taskDto.setLocked(false);
             }
-        }
 
+        }
+        dto.setTasks(sortedTasks);
         return dto;
+    
     }
 
 
@@ -102,9 +105,16 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
             task.setName(taskDto.getName());
             task.setType(taskDto.getType());
             task.setTaskOrder(taskDto.getTaskOrder());
-            task.setQrAnswer(taskDto.getQrAnswer());
-            task.setNfcAnswer(taskDto.getNfcAnswer());
-            task.setTextAnswer(taskDto.getTextAnswer());
+
+            // PUNTO 2: Generazione automatica Risposta per QR e NFC
+                if ("QR".equalsIgnoreCase(taskDto.getType()) || "NFC".equalsIgnoreCase(taskDto.getType())) {
+                    String generatedCode = UUID.randomUUID().toString();
+                    task.setQrAnswer(generatedCode);
+                    task.setNfcAnswer(generatedCode);
+                } else {
+                    // PUNTO 1: Per i task TEXT, usiamo la risposta fornita dall'utente
+                    task.setTextAnswer(taskDto.getTextAnswer());
+                }
 
             // SALVATAGGIO DELL'INDIZIO (CLUE)
         if (taskDto.getTextClue() != null && !taskDto.getTextClue().isEmpty()) {
@@ -125,7 +135,7 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
     // 4. Save to DB (CascadeType.ALL in Challenge entity will handle saving tasks)
     Challenge savedChallenge = challengeRepository.save(challengeEntity);
     
-    return toChallengeDto(savedChallenge);
+    return toChallengeDto(challengeRepository.save(challengeEntity));
 }
 
     /**
@@ -228,12 +238,19 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
         return dto;
     }
 
+
+    //Ver el tipo de tarea
     private TaskDto toTaskDto(Task task) {
         TaskDto dto = new TaskDto();
         dto.setId(task.getId());
         dto.setName(task.getName());
         dto.setTaskOrder(task.getTaskOrder());
         dto.setType(task.getType());
+
+        dto.setQrAnswer(task.getQrAnswer());
+        dto.setNfcAnswer(task.getNfcAnswer());
+        dto.setTextAnswer(task.getTextAnswer());
+
         // Mappiamo la "Pista" (Clue) come descrizione del compito per la vista dettaglio [cite: 66, 137]
         if (task.getClues() != null && !task.getClues().isEmpty()) {
             dto.setDescription(task.getClues().get(0).getTextClue());
@@ -242,7 +259,7 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
         return dto;
     }
 
-    public List<ChallengeDto> getMyInProgressChallenges(String userEmail) {
+     public List<ChallengeDto> getMyInProgressChallenges(String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
            var challenges = challengeRepository.findAllChallengesWithCompletionsByUser(user.getId());
