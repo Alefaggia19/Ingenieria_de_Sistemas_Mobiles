@@ -37,11 +37,11 @@ public class TaskController {
     public Task addTaskToChallenge(@PathVariable Long challengeId, @RequestBody Task task) {
         return taskService.addTaskToChallenge(challengeId, task);
     }
-    
 
+    record BasicResponse(String errorMessage){}
     //We expose the API to complete tasks. It is essential for supporting validation via QR and NFC
     @PostMapping("/tasks/{id}/complete")
-public ResponseEntity<String> completeTask(@PathVariable Long id, 
+public BasicResponse completeTask(@PathVariable Long id,
                                            @RequestBody String userResponse, 
                                            Principal principal) {
     // principal.getName() ottiene lo username dal JWT
@@ -49,9 +49,9 @@ public ResponseEntity<String> completeTask(@PathVariable Long id,
     boolean success = taskService.completeTask(id, principal.getName(), userResponse.replace("\"",""));
     
     if (success) {
-        return ResponseEntity.ok("Task completata con successo!");
+        return new BasicResponse("");
     } else {
-        return ResponseEntity.badRequest().body("Risposta errata o già completata.");
+        return new BasicResponse("No se pudo completar la tarea");
     }
 }
 
