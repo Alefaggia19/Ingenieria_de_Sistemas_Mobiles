@@ -70,15 +70,7 @@ public class ChallengeService {
                 // Se la sfida non è ordinata, nulla è bloccato a priori
                 taskDto.setLocked(false);
             }
-        
 
-            // Se la sfida è ordinata, il task è locked se il precedente non è finito
-            if (challenge.isOrdered()) {
-                taskDto.setLocked(!previousTaskCompleted);
-                previousTaskCompleted = isCompleted;
-            } else {
-                taskDto.setLocked(false);
-            }
         }
         dto.setTasks(sortedTasks);
         return dto;
@@ -116,8 +108,9 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
 
             // PUNTO 2: Generazione automatica Risposta per QR e NFC
                 if ("QR".equalsIgnoreCase(taskDto.getType()) || "NFC".equalsIgnoreCase(taskDto.getType())) {
-                    task.setQrAnswer(UUID.randomUUID().toString());
-                    task.setNfcAnswer(task.getQrAnswer()); // Usiamo lo stesso codice univoco
+                    String generatedCode = UUID.randomUUID().toString();
+                    task.setQrAnswer(generatedCode);
+                    task.setNfcAnswer(generatedCode);
                 } else {
                     // PUNTO 1: Per i task TEXT, usiamo la risposta fornita dall'utente
                     task.setTextAnswer(taskDto.getTextAnswer());
