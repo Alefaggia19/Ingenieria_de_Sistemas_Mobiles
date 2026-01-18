@@ -75,9 +75,12 @@ public List<ChallengeDto> getAllChallenges() {
 
     //Delete a challenge
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteChallenge(@PathVariable Long id, Principal principal) {
-        challengeService.deleteChallenge(id, principal.getName());
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteChallenge(@PathVariable Long id, Principal principal) {
+    // principal.getName() restituisce l'email dell'utente loggato
+    challengeService.deleteChallenge(id, principal.getName());
+    
+    // Restituiamo 204 No Content per confermare l'eliminazione senza corpo di risposta
+    return ResponseEntity.noContent().build();
     }
 
 }
