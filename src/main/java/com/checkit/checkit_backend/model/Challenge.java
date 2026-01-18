@@ -17,7 +17,7 @@ public class Challenge {
     private String name;
 
     @Lob
-    @Column(columnDefinition = "TEXT") // O LONGTEXT per database come MySQL
+    @Column(name = "image", columnDefinition = "LONGTEXT") // O LONGTEXT per database come MySQL
     private String image;
 
     @Column(length = 1000) // Diamo più spazio alla descrizione

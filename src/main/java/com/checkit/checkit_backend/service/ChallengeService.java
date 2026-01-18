@@ -8,10 +8,12 @@ import com.checkit.checkit_backend.model.Clue;
 import com.checkit.checkit_backend.model.Task;
 import com.checkit.checkit_backend.model.User;
 import com.checkit.checkit_backend.repository.ChallengeRepository;
+import com.checkit.checkit_backend.repository.TaskCompletionRepository;
 import com.checkit.checkit_backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -19,10 +21,12 @@ public class ChallengeService {
 
     private final ChallengeRepository challengeRepository;
     private final UserRepository userRepository;
+    private final TaskCompletionRepository taskCompletionRepository;
 
-    public ChallengeService(ChallengeRepository challengeRepository, UserRepository userRepository) {
+    public ChallengeService(ChallengeRepository challengeRepository, UserRepository userRepository, TaskCompletionRepository taskCompletionRepository) {
         this.challengeRepository = challengeRepository;
         this.userRepository = userRepository;
+        this.taskCompletionRepository = taskCompletionRepository;
     }
 
 
@@ -70,7 +74,15 @@ public class ChallengeService {
                 // Se la sfida non è ordinata, nulla è bloccato a priori
                 taskDto.setLocked(false);
             }
+        
 
+            // Se la sfida è ordinata, il task è locked se il precedente non è finito
+            if (challenge.isOrdered()) {
+                taskDto.setLocked(!previousTaskCompleted);
+                previousTaskCompleted = isCompleted;
+            } else {
+                taskDto.setLocked(false);
+            }
         }
         dto.setTasks(sortedTasks);
         return dto;
@@ -108,9 +120,8 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
 
             // PUNTO 2: Generazione automatica Risposta per QR e NFC
                 if ("QR".equalsIgnoreCase(taskDto.getType()) || "NFC".equalsIgnoreCase(taskDto.getType())) {
-                    String generatedCode = UUID.randomUUID().toString();
-                    task.setQrAnswer(generatedCode);
-                    task.setNfcAnswer(generatedCode);
+                    task.setQrAnswer(UUID.randomUUID().toString());
+                    task.setNfcAnswer(task.getQrAnswer()); // Usiamo lo stesso codice univoco
                 } else {
                     // PUNTO 1: Per i task TEXT, usiamo la risposta fornita dall'utente
                     task.setTextAnswer(taskDto.getTextAnswer());
@@ -194,7 +205,8 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
             .toList();
     }
 
-
+    
+    @Transactional // Fondamentale per le operazioni di delete multiple
     public void deleteChallenge(Long challengeId, String currentUserEmail) {
         // 1. Trova la sfida
         Challenge challenge = challengeRepository.findById(challengeId)
@@ -207,6 +219,11 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
         // 3. LOGICA DI SICUREZZA: Verifica se l'utente è l'autore
         if (!challenge.getUser().getId().equals(user.getId())) {
             throw new RuntimeException("No tienes permisos para eliminar este desafío");
+        }
+
+        // SOLUZIONE SQL 23503: Elimina tutti i completamenti associati ai task di questa sfida
+        for (Task task : challenge.getTasks()) {
+        taskCompletionRepository.deleteByTaskId(task.getId());
         }
 
         // 4. Elimina (la relazione CascadeType.ALL nel modello Challenge gestirà i task orfani)

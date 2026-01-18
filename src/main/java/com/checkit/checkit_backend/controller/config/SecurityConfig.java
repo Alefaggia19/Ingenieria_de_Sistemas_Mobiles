@@ -21,8 +21,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import java.util.Arrays;
+import jakarta.servlet.DispatcherType;
 
 @Configuration
 @EnableWebSecurity
@@ -68,15 +68,17 @@ public class SecurityConfig {
                 // 2. Define authorization rules
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints (login, registration)
-                        .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
-
+                        //##.requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                        .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll() // Consente il dispatch interno degli errori
+                        .requestMatchers("/api/auth/**", "/error", "/h2-console/**").permitAll()
                         // 2. ACCESS TO CONSOLE H2
                        // Senza questa, non potrai entrare in /h2-console
-                         .requestMatchers("/h2-console/**").permitAll()
+                         //##.requestMatchers("/h2-console/**").permitAll()
 
                         //MUST BE PRIVATE, ITS JUST FOR TESTING THE JSON
                         .requestMatchers("/api/admin/stats").permitAll() // Aggiungi questa riga temporaneamente
                         
+                        //##.requestMatchers("/error").permitAll()
                         // All other requests require authentication
                         .anyRequest().authenticated()
 
