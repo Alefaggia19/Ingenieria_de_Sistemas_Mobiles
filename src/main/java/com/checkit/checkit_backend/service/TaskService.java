@@ -95,6 +95,7 @@ public class TaskService {
         var taskDTO  = new TaskDetailDTO();
         var taskEntity = taskRepository.findById(id).orElse(null);
         assert taskEntity != null;
+        taskDTO.setAuthorName(taskEntity.getChallenge().getUser().getRealname());
         taskDTO.setChallengeID(taskEntity.getChallenge().getId());
         taskDTO.setId(taskEntity.getId());
         taskDTO.setName(taskEntity.getName());

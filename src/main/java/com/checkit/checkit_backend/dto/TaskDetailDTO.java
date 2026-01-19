@@ -4,6 +4,8 @@ import java.util.List;
 
 public class TaskDetailDTO {
 
+    private String authorName;
+
     private Long challengeID;
 
     private Long id;
@@ -80,5 +82,13 @@ public class TaskDetailDTO {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
     }
 }
