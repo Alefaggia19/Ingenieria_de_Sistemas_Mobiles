@@ -61,11 +61,28 @@ public class TaskService {
         if (isCorrect) {
             TaskCompletion completion = new TaskCompletion(user, task);
             taskCompletionRepository.save(completion);
-            return true;
-        }
+            
         
-        return false; // Answer was incorrect
+        
+          // --- NUOVA LOGICA: VERIFICA COMPLETAMENTO SFIDA ---
+          Challenge challenge = task.getChallenge();
+          // Prendi tutti gli ID dei compiti di questa sfida
+         List<Long> allTaskIds = challenge.getTasks().stream().map(Task::getId).toList();
+         // Conta quanti ne ha fatti l'utente
+         long completedTasksCount = taskCompletionRepository.countByUserIdAndTaskIdIn(user.getId(), allTaskIds);
+
+         // Se il numero coincide, aggiungi l'utente alla lista dei "completisti" della sfida
+         if (completedTasksCount == allTaskIds.size()) {
+            if (!challenge.getUsersWhoCompleted().contains(user)) {
+                challenge.getUsersWhoCompleted().add(user);
+                challengeRepository.save(challenge); // Salva la relazione ManyToMany
+            }
+          }
+           return true;
+        }
+     return false;
     }
+
 
     // --- Standard CRUD Methods ---
     

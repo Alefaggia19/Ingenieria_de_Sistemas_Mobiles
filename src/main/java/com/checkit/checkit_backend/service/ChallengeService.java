@@ -34,6 +34,7 @@ public class ChallengeService {
      * Retrieves the full details of a challenge, 
      * calculating the specific progress for the logged-in user
      */
+    @Transactional(readOnly = true)
     public ChallengeDto getChallengeDetail(Long challengeId, String currentUserEmail) {
         // 1. Find the user and the relative Challenge from DB
         User user = userRepository.findByEmail(currentUserEmail)
@@ -46,7 +47,7 @@ public class ChallengeService {
 
         dto.setAuthor(challenge.getUser().getEmail().equals(currentUserEmail));
         dto.setSaved(user.getSavedChallenges().contains(challenge));
-        dto.setCompletedByCount(challenge.getUsersWhoCompleted().size());
+        dto.setCompletionCount(challenge.getUsersWhoCompleted().size());
 
         // 3. PUNTO 4: Ordinamento dei task
         // È fondamentale ordinare PRIMA di calcolare lo stato 'locked'
@@ -250,7 +251,7 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
         
         // Flatten User object to just authorName
         if (challenge.getUser() != null) {
-            dto.setAuthorName(challenge.getUser().getUsername());
+            dto.setAuthorName(challenge.getUser().getRealname());
         }
         // Map tasks if present
         // Ordiniamo i task per taskOrder prima di mapparli per garantire la logica del loop sopra

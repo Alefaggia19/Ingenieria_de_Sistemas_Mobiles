@@ -10,6 +10,9 @@ INSERT INTO users (realname, email, password) VALUES ('Marco Rossi', 'marco@test
 INSERT INTO users (realname, email, password) VALUES ('Lucas Garcia', 'lucas@test.es', '$2a$10$8.UnVuG9UMJpm39zS..G2u4.O9.p.t6S1U2V.E6t7m3.1.2.3.4.5');
 INSERT INTO users (realname, email, password) VALUES ('Sofia Bianchi', 'sofia@test.it', '$2a$10$8.UnVuG9UMJpm39zS..G2u4.O9.p.t6S1U2V.E6t7m3.1.2.3.4.5');
 INSERT INTO users (realname, email, password) VALUES ('Test User', 'test@checkit.com', '$2a$10$8.UnVuG9UMJpm39zS..G2u4.O9.p.t6S1U2V.E6t7m3.1.2.3.4.5');
+INSERT INTO users (realname, email, password) VALUES ('Elena Neri', 'elena@test.it', '$2a$10$8.UnVuG9UMJpm39zS..G2u4.O9.p.t6S1U2V.E6t7m3.1.2.3.4.5');
+INSERT INTO users (realname, email, password) VALUES ('Carlos Ruiz', 'carlos@test.es', '$2a$10$8.UnVuG9UMJpm39zS..G2u4.O9.p.t6S1U2V.E6t7m3.1.2.3.4.5');
+
 
 -- 2. Inserimento Sessioni (KPI: Tasa de Conversión)
 -- Insert 4 session 
@@ -44,6 +47,10 @@ INSERT INTO challenges (name, description, is_ordered, user_id, creation_date)
 VALUES ('Patios de Córdoba', 'Visita i cortili più belli', true, 3, DATEADD('DAY', -2, CURRENT_TIMESTAMP));
 INSERT INTO challenges (name, description, is_ordered, user_id, creation_date) 
 VALUES ('Desafío Antiguo', 'Sfida creata tempo fa', false, 1, DATEADD('DAY', -15, CURRENT_TIMESTAMP));
+INSERT INTO challenges (name, description, is_ordered, user_id, creation_date) 
+VALUES ('Escursione Sierra Morena', 'Un percorso tra i sentieri naturali', true, 6, CURRENT_TIMESTAMP);
+INSERT INTO challenges (name, description, is_ordered, user_id, creation_date) 
+VALUES ('Secretos del Alcázar', 'Scopri i segreti dei re cristiani', false, 7, CURRENT_TIMESTAMP);
 
 --- 3. TASKS -----
 -- Task por challenge 1 (Ruta Romana)
@@ -70,6 +77,11 @@ INSERT INTO tasks (name, type, task_order, challenge_id,qr_answer) VALUES ('Pati
 INSERT INTO tasks (name, type, task_order, challenge_id,text_answer) VALUES ('Vieja Inscripción', 'TEXT', 1, 6,'text');
 INSERT INTO tasks (name, type, task_order, challenge_id,qr_answer) VALUES ('Puerta de Almodóvar', 'QR', 2, 6,'qr');
 
+INSERT INTO tasks (name, type, task_order, challenge_id, qr_answer) VALUES ('Mirador de las Ermitas', 'QR', 1, 7, 'mirador_qr');
+
+-- Task per Carlos (Challenge ID 8)
+INSERT INTO tasks (name, type, task_order, challenge_id, nfc_answer) VALUES ('Baños Doña Leonor', 'NFC', 1, 8, 'alcazar_nfc');
+
 -- 4. Inserimento NPS (KPI: Net Promoter Score)
 INSERT INTO nps_ratings (score, user_id, timestamp) VALUES (10, 1, CURRENT_TIMESTAMP);
 INSERT INTO nps_ratings (score, user_id, timestamp) VALUES (8.0, 2, CURRENT_TIMESTAMP);
@@ -85,10 +97,21 @@ INSERT INTO nps_ratings (score, user_id, timestamp) VALUES (7.0, 1, CURRENT_TIME
 INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (1, 1, CURRENT_TIMESTAMP);
 INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (2, 1, CURRENT_TIMESTAMP);
 INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (1, 2, CURRENT_TIMESTAMP);
+INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (1, 2, CURRENT_TIMESTAMP);
+INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (2, 2, CURRENT_TIMESTAMP);
+INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (1, 3, CURRENT_TIMESTAMP);
+INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (2, 3, CURRENT_TIMESTAMP);
+INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (3, 4, CURRENT_TIMESTAMP);
+INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (4, 4, CURRENT_TIMESTAMP);
+
+-- Desafios Completados
+INSERT INTO challenge_completions (challenge_id, user_id) VALUES (1, 2);
+INSERT INTO challenge_completions (challenge_id, user_id) VALUES (1, 3);
+INSERT INTO challenge_completions (challenge_id, user_id) VALUES (2, 4);
+INSERT INTO challenge_completions (challenge_id, user_id) VALUES (2, 4);
+INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (1, 5, CURRENT_TIMESTAMP);
 
 -- Añadimos pistas a la tarea 1
 INSERT INTO clues (task_id,text_clue ) VALUES (3,'¿Alguien te está observando?');
 INSERT INTO clues (task_id,text_clue ) VALUES (3,'Siempre desconfia de los sotanos');
-
 INSERT INTO clues (task_id,text_clue ) VALUES (4,'Siempre mira a tu espalda');
-

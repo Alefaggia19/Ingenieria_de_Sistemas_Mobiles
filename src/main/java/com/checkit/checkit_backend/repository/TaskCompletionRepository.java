@@ -11,4 +11,6 @@ public interface TaskCompletionRepository extends JpaRepository<TaskCompletion, 
     long countByTaskId(Long taskId);
 
     void deleteByTaskId(Long taskId);
+    //Conta i completamenti per un utente filtrando su una lista di ID task
+    long countByUserIdAndTaskIdIn(Long userId, java.util.Collection<Long> taskIds);
 }
