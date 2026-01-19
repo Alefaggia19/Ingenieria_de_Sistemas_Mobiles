@@ -2,16 +2,16 @@ INSERT INTO USERS (realname,password,email)
 VALUES
 ('admin','$2a$12$Akz1PcXyaQhFpTEWSF2A6e92PxYiPrfOihVz/NVpiteGQWJO3OQ8K','admin@checkit.com');
 
-INSERT INTO users (realname, email, password) VALUES ('Ana Gómez', 'ana@example.com', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.TVuHOnu');
+INSERT INTO users (realname, email, password) VALUES ('Ana Gómez', 'ana@example.com', '$2a$12$Akz1PcXyaQhFpTEWSF2A6e92PxYiPrfOihVz/NVpiteGQWJO3OQ8K');
 
 -- 1. Inserimento Users (Password: "password" codificata BCrypt)
-INSERT INTO users (realname, email, password) VALUES ('user1', 'user1@test.com', '$2a$10$8.UnVuG9UMJpm39zS..G2u4.O9.p.t6S1U2V.E6t7m3.1.2.3.4.5');
-INSERT INTO users (realname, email, password) VALUES ('Marco Rossi', 'marco@test.it', '$2a$10$8.UnVuG9UMJpm39zS..G2u4.O9.p.t6S1U2V.E6t7m3.1.2.3.4.5');
-INSERT INTO users (realname, email, password) VALUES ('Lucas Garcia', 'lucas@test.es', '$2a$10$8.UnVuG9UMJpm39zS..G2u4.O9.p.t6S1U2V.E6t7m3.1.2.3.4.5');
-INSERT INTO users (realname, email, password) VALUES ('Sofia Bianchi', 'sofia@test.it', '$2a$10$8.UnVuG9UMJpm39zS..G2u4.O9.p.t6S1U2V.E6t7m3.1.2.3.4.5');
-INSERT INTO users (realname, email, password) VALUES ('Test User', 'test@checkit.com', '$2a$10$8.UnVuG9UMJpm39zS..G2u4.O9.p.t6S1U2V.E6t7m3.1.2.3.4.5');
-INSERT INTO users (realname, email, password) VALUES ('Elena Neri', 'elena@test.it', '$2a$10$8.UnVuG9UMJpm39zS..G2u4.O9.p.t6S1U2V.E6t7m3.1.2.3.4.5');
-INSERT INTO users (realname, email, password) VALUES ('Carlos Ruiz', 'carlos@test.es', '$2a$10$8.UnVuG9UMJpm39zS..G2u4.O9.p.t6S1U2V.E6t7m3.1.2.3.4.5');
+INSERT INTO users (realname, email, password) VALUES ('Jose Martinez', 'jose@test.com', '$2a$12$Akz1PcXyaQhFpTEWSF2A6e92PxYiPrfOihVz/NVpiteGQWJO3OQ8K');
+INSERT INTO users (realname, email, password) VALUES ('Marco Rossi', 'marco@test.it', '$2a$12$Akz1PcXyaQhFpTEWSF2A6e92PxYiPrfOihVz/NVpiteGQWJO3OQ8K');
+INSERT INTO users (realname, email, password) VALUES ('Lucas Garcia', 'lucas@test.es', '$2a$12$Akz1PcXyaQhFpTEWSF2A6e92PxYiPrfOihVz/NVpiteGQWJO3OQ8K');
+INSERT INTO users (realname, email, password) VALUES ('Sofia Bianchi', 'sofia@test.it', '$2a$12$Akz1PcXyaQhFpTEWSF2A6e92PxYiPrfOihVz/NVpiteGQWJO3OQ8K');
+INSERT INTO users (realname, email, password) VALUES ('Test User', 'test@checkit.com','$2a$12$Akz1PcXyaQhFpTEWSF2A6e92PxYiPrfOihVz/NVpiteGQWJO3OQ8K');
+INSERT INTO users (realname, email, password) VALUES ('Elena Neri', 'elena@test.it', '$2a$12$Akz1PcXyaQhFpTEWSF2A6e92PxYiPrfOihVz/NVpiteGQWJO3OQ8K');
+INSERT INTO users (realname, email, password) VALUES ('Carlos Ruiz', 'carlos@test.es', '$2a$12$Akz1PcXyaQhFpTEWSF2A6e92PxYiPrfOihVz/NVpiteGQWJO3OQ8K');
 
 
 -- 2. Inserimento Sessioni (KPI: Tasa de Conversión)
@@ -36,21 +36,21 @@ INSERT INTO user_sessions (user_id, start_time) VALUES (3, CURRENT_TIMESTAMP);
 -- 3. Inserimento Sfide (KPI: Número de desafíos creados / Conversiones)
 -- Se abbiamo 2 sfide su 4 sessioni, la Tasa de Conversión sarà 50%
 INSERT INTO challenges (name, description, is_ordered, user_id, creation_date) 
-VALUES ('Ruta Romana', 'Descrizione test', true, 1, CURRENT_TIMESTAMP);
+VALUES ('Ruta Romana', 'Descubre los restos de la antigua Córdoba Romana', true, 1, CURRENT_TIMESTAMP);
 INSERT INTO challenges (name, description, is_ordered, user_id, creation_date) 
-VALUES ('Misteri di Cordoba', 'Descrizione test', false, 2, CURRENT_TIMESTAMP);
+VALUES ('Misterios de Cordoba', 'Aventurate en los rincones más espeluznantes de toda Córdoba', false, 2, CURRENT_TIMESTAMP);
 INSERT INTO challenges (name, description, is_ordered, user_id, creation_date) 
-VALUES ('Tour Mezquita', 'Descubre la historia de la Mezquita', true, 1, CURRENT_TIMESTAMP);
+VALUES ('Tour Mezquita', 'Descubre la historia de la Mezquita Catedral', true, 1, CURRENT_TIMESTAMP);
 INSERT INTO challenges (name, description, is_ordered, user_id, creation_date) 
-VALUES ('Misterios Judería', 'Cerca i segreti del quartiere ebraico', false, 2, CURRENT_TIMESTAMP);
+VALUES ('Misterios Judería', 'Investiga el pasado judio del centro de Córdoba', false, 2, CURRENT_TIMESTAMP);
 INSERT INTO challenges (name, description, is_ordered, user_id, creation_date) 
-VALUES ('Patios de Córdoba', 'Visita i cortili più belli', true, 3, DATEADD('DAY', -2, CURRENT_TIMESTAMP));
+VALUES ('Patios de Córdoba', 'Disfruta de los patios de Córdoba', true, 3, DATEADD('DAY', -2, CURRENT_TIMESTAMP));
 INSERT INTO challenges (name, description, is_ordered, user_id, creation_date) 
 VALUES ('Desafío Antiguo', 'Sfida creata tempo fa', false, 1, DATEADD('DAY', -15, CURRENT_TIMESTAMP));
 INSERT INTO challenges (name, description, is_ordered, user_id, creation_date) 
-VALUES ('Escursione Sierra Morena', 'Un percorso tra i sentieri naturali', true, 6, CURRENT_TIMESTAMP);
+VALUES ('Excursiones por Sierra Morena', 'Visita los senderos más bonitos de la sierra de Córdoba', true, 6, CURRENT_TIMESTAMP);
 INSERT INTO challenges (name, description, is_ordered, user_id, creation_date) 
-VALUES ('Secretos del Alcázar', 'Scopri i segreti dei re cristiani', false, 7, CURRENT_TIMESTAMP);
+VALUES ('Secretos del Alcázar', 'Descubre donde vivian los reyes cristianos', false, 7, CURRENT_TIMESTAMP);
 
 --- 3. TASKS -----
 -- Task por challenge 1 (Ruta Romana)
