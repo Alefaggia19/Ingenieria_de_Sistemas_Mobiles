@@ -249,7 +249,7 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
         dto.setCreationDate(challenge.getCreationDate());
         dto.setImageBase64(challenge.getImage()); // Mapping saved imagine 
         
-        dto.setCompletionCount(challenge.getUsersWhoCompleted().size());
+       dto.setCompletionCount(challenge.getUsersWhoCompleted() != null ? challenge.getUsersWhoCompleted().size() : 0);
         
         // Flatten User object to just authorName
         if (challenge.getUser() != null) {
