@@ -103,13 +103,30 @@ INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (1, 3, CURR
 INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (2, 3, CURRENT_TIMESTAMP);
 INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (3, 4, CURRENT_TIMESTAMP);
 INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (4, 4, CURRENT_TIMESTAMP);
+INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (1, 5, CURRENT_TIMESTAMP);
+INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (5, 2, CURRENT_TIMESTAMP);
+INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (6, 2, CURRENT_TIMESTAMP);
+INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (1, 4, CURRENT_TIMESTAMP);
+INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (2, 4, CURRENT_TIMESTAMP);
+INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (7, 5, CURRENT_TIMESTAMP);
+INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (8, 5, CURRENT_TIMESTAMP);
+INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (9, 6, CURRENT_TIMESTAMP);
+INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (10, 6, CURRENT_TIMESTAMP);
+INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (13, 8, CURRENT_TIMESTAMP);
+INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (14, 9, CURRENT_TIMESTAMP);
 
 -- Desafios Completados
 INSERT INTO challenge_completions (challenge_id, user_id) VALUES (1, 2);
 INSERT INTO challenge_completions (challenge_id, user_id) VALUES (1, 3);
 INSERT INTO challenge_completions (challenge_id, user_id) VALUES (2, 4);
 INSERT INTO challenge_completions (challenge_id, user_id) VALUES (2, 4);
-INSERT INTO task_completions (task_id, user_id, completed_at) VALUES (1, 5, CURRENT_TIMESTAMP);
+INSERT INTO challenge_completions (challenge_id, user_id) VALUES (3, 2);
+INSERT INTO challenge_completions (challenge_id, user_id) VALUES (1, 4);
+INSERT INTO challenge_completions (challenge_id, user_id) VALUES (4, 5);
+INSERT INTO challenge_completions (challenge_id, user_id) VALUES (5, 6);
+INSERT INTO challenge_completions (challenge_id, user_id) VALUES (7, 8);
+INSERT INTO challenge_completions (challenge_id, user_id) VALUES (8, 9);
+
 
 -- Añadimos pistas a la tarea 1
 INSERT INTO clues (task_id,text_clue ) VALUES (3,'¿Alguien te está observando?');
