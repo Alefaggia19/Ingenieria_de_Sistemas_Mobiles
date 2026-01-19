@@ -220,6 +220,15 @@ public ChallengeDto createChallenge(NewChallengeDto dto, String username) {
             throw new RuntimeException("No tienes permisos para eliminar este desafío");
         }
 
+        // --- SOLUZIONE ERRORE 23503 (CHALLENGE_USER_SAVED) ---
+       // Rimuoviamo la sfida dalla lista dei "salvati" di tutti gli utenti prima di eliminarla
+        for (User u : userRepository.findAll()) {
+         if (u.getSavedChallenges().contains(challenge)) {
+            u.getSavedChallenges().remove(challenge);
+            userRepository.save(u);
+            }
+        }
+
         // SOLUZIONE SQL 23503: Elimina tutti i completamenti associati ai task di questa sfida
         for (Task task : challenge.getTasks()) {
         taskCompletionRepository.deleteByTaskId(task.getId());
