@@ -71,9 +71,6 @@ public class SecurityConfig {
                         //##.requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll() // Consente il dispatch interno degli errori
                         .requestMatchers("/api/auth/**", "/error", "/h2-console/**").permitAll()
-                        // 2. ACCESS TO CONSOLE H2
-                       // Senza questa, non potrai entrare in /h2-console
-                         //##.requestMatchers("/h2-console/**").permitAll()
 
                         //MUST BE PRIVATE, ITS JUST FOR TESTING THE JSON
                         .requestMatchers("/api/admin/stats").permitAll() // Aggiungi questa riga temporaneamente
